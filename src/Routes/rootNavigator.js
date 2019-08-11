@@ -1,0 +1,18 @@
+import React, { Component } from 'react';
+import { createAppContainer, createMaterialTopTabNavigator, createStackNavigator, createSwitchNavigator, createDrawerNavigator } from 'react-navigation';
+import Dashboard from '../Screen/Dashboard'
+import Drawerdashboard from '../Components/DrawerDashboard'
+const DashboardNavigator = createStackNavigator({
+    Dashboard
+}, {
+    initialRouteName: 'Dashboard',
+    headerMode: 'none'
+})
+
+const DrawerKuyMusik = createDrawerNavigator({
+    Dashboard: DashboardNavigator
+},{
+    contentComponent: Drawerdashboard
+})
+
+export default createAppContainer(DrawerKuyMusik)
