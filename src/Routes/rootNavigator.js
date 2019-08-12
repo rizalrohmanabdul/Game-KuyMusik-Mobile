@@ -5,7 +5,7 @@ import Login from '../Screen/Login'
 import Register from '../Screen/Register'
 import Leaderboard from '../Screen/Leaderboard'
 import Drawerdashboard from '../Components/DrawerDashboard'
-const DashboardNavigator  createStackNavigator({
+const DashboardNavigator = createStackNavigator({
     Dashboard,
     Login,
     Register,

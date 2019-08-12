@@ -20,7 +20,7 @@ import {
   Header,
   LearnMoreLinks,
   Colors,
-  DebugIntructions,
+  DebugInstructions,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 import RootNavigator from './src/Routes/rootNavigator'

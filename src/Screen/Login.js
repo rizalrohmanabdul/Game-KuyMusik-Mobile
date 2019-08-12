@@ -51,7 +51,7 @@ class Login extends Component {
 
 export default Login;
 
-const style = StyleSheet.create({
+
   body: {
     flex: 1,
     backgroundColor: "white"
