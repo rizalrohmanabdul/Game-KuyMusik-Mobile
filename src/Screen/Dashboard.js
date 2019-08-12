@@ -25,7 +25,7 @@ class Dashboard extends Component {
                             source={require('../Assets/img/1564481740.jpg')}
                         />
                     </TouchableOpacity>
-                    <TouchableOpacity style={style.scornavbar}>
+                    <TouchableOpacity style={style.scornavbar}  onPress={() => this.props.navigation.navigate('Leaderboard')}>
                         <Image
                             style={{ width: 32, height: 32 }}
                             source={require('../Assets/img/crown.png')}

@@ -21,7 +21,7 @@ class DrawerDashboard extends Component {
           <Text style={style.name}>Rizal Rohman</Text>
         </View>
         <View>
-            <TouchableOpacity style={style.menudrawer}>
+            <TouchableOpacity style={style.menudrawer} onPress={() => this.props.navigation.navigate('Leaderboard')}>
             <Image
             style={style.icondrawer}
             source={require("../Assets/img/crown.png")}

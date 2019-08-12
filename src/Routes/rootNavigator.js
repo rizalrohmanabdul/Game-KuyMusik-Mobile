@@ -11,7 +11,7 @@ const DashboardNavigator = createStackNavigator({
     Register,
     Leaderboard
 }, {
-    initialRouteName: 'Leaderboard',
+    initialRouteName: 'Dashboard',
     headerMode: 'none'
 })
 
