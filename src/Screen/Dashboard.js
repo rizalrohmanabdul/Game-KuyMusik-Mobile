@@ -6,7 +6,7 @@ import {
     View,
     Text,
     StatusBar,
-    TouchableOpacity,
+    TouchableOpacity
     Image
 } from 'react-native';
 
@@ -19,10 +19,10 @@ class Dashboard extends Component {
         return (
             <View style={style.body}>
                 <View style={style.navbar}>
-                    <TouchableOpacity style={style.profilnavbar}>
+                    <TouchableOpacity style={style.profilnavbar} onPress={()=>this.props.navigation.openDrawer()}>
                         <Image
                             style={{ width: 32, height: 32, borderRadius: 100, overflow: "hidden" }}
-                            source={require('../Assets/img/user.png')}
+                            source={require('../Assets/img/1564481740.jpg')}
                         />
                     </TouchableOpacity>
                     <TouchableOpacity style={style.scornavbar}>
@@ -69,7 +69,7 @@ const style = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between",
         padding: 4,
-        elevation: 3,
+        elevation: 5,
         shadowOffset: {
             height: 2,
             width: 0
