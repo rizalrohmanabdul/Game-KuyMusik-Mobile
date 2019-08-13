@@ -37,4 +37,38 @@ class DrawerDashboard extends Component {
 }
 export default DrawerDashboard;
 
-
+const style = StyleSheet.create({
+  profile: {
+    alignItems: "center",
+    margin: 15
+  },
+  image: {
+    width: 95,
+    height: 96,
+    borderRadius: 54
+  },
+  name: {
+    fontSize: 17,
+    marginTop: 10,
+    fontWeight: "bold",
+    color: "#000000"
+  },
+  menudrawer: {
+    width: "100%",
+    flexDirection: "row",
+    alignItems: "center",
+    marginLeft: "5%"
+  },
+  textMenu: {
+    margin: 10,
+    fontWeight: "bold",
+    color: "#000",
+    fontSize: 15,
+    marginLeft: "13%"
+  },
+  icondrawer: {
+    width: 32, 
+    height: 32,
+    position: "absolute"
+  }
+});
