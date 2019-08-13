@@ -10,48 +10,89 @@ import {
   Image
 } from "react-native";
 import Sound from "react-native-sound";
-import isEmpty from 'lodash.isempty'
+import isEmpty from "lodash.isempty";
 
 class Dashboard extends Component {
   constructor() {
     super();
     this.onButtonPress = this.onButtonPress.bind(this);
-
+    this.state = {
+      hasil: 0,
+      combo: 5,
+      point: 0,
+      pattern: [1, 2, 1, 1, 4],
+      isNow: 0,
+      button: 1
+    };
   }
-  onButtonPress(sing, numButton) {
+  onButtonPress = async (sing, numButton) => {
     if (numButton === 1) {
+      await this.setState({
+        button: 1
+      });
+      console.log("Tombol " + this.state.button);
       const audio = new Sound(sing, Sound.MAIN_BUNDLE, err => {
-      if (err) {
-        return;
-      } else {
-        audio.play(() => audio.release());
-      }
-    });
-      
+        if (err) {
+          return;
+        } else {
+          audio.play(() => audio.release());
+        }
+      });
     } else if (numButton === 2) {
+      await this.setState({
+        button: 4
+      });
+      console.log("Tombol " + this.state.button);
       const audio = new Sound(sing, Sound.MAIN_BUNDLE, err => {
-      if (err) {
-        return;
-      } else {
-        audio.play(() => audio.release());
-      }
-    });
-    }else if (numButton === 3) {
+        if (err) {
+          return;
+        } else {
+          audio.play(() => audio.release());
+        }
+      });
+    } else if (numButton === 3) {
+      await this.setState({
+        button: 2
+      });
+      console.log("Tombol " + this.state.button);
       const audio = new Sound(sing, Sound.MAIN_BUNDLE, err => {
-      if (err) {
-        return;
-      } else {
-        audio.play(() => audio.release());
-      }
-    });
-    }else if (numButton === 4) {
+        if (err) {
+          return;
+        } else {
+          audio.play(() => audio.release());
+        }
+      });
+    } else if (numButton === 4) {
+      await this.setState({
+        button: 3
+      });
+      console.log("Tombol " + this.state.button);
       const audio = new Sound(sing, Sound.MAIN_BUNDLE, err => {
-      if (err) {
-        return;
-      } else {
-        audio.play(() => audio.release());
+        if (err) {
+          return;
+        } else {
+          audio.play(() => audio.release());
+        }
+      });
+    }
+
+    if (this.state.pattern[this.state.isNow] === this.state.button) {
+      if (this.state.pattern.length === this.state.isNow + 1) {
+        await this.setState({
+          combo: this.state.combo - 1
+        });
       }
-    });
+      await this.setState({
+        point: this.state.point + 10,
+        isNow: this.state.isNow + 1
+      });
+    } else {
+      await this.setState({
+        point: 0,
+        hasil: 0,
+        isNow: 0,
+        combo: 5
+      });
     }
     // const audio = new Sound(sing, Sound.MAIN_BUNDLE, err => {
     //   if (err) {
@@ -60,6 +101,12 @@ class Dashboard extends Component {
     //     audio.play(() => audio.release());
     //   }
     // });
+  };
+  setpoint() {
+    this.setState(() => {
+      this.state.button = 1;
+    });
+    console.log("setpoint " + this.state.button);
   }
   render() {
     return (
@@ -89,7 +136,10 @@ class Dashboard extends Component {
             />
           </TouchableOpacity>
         </View>
-        <Text style={style.text}>Combo Hit : 5</Text>
+        <View style={{ marginTop: 90 }}>
+          <Text style={{ textAlign: "center", fontSize: 30, color: "#f79237", }}>POINT : {this.state.point}</Text>
+        </View>
+        <Text style={style.text}>Combo Hit : {this.state.combo}</Text>
         <Text style={style.text2}>Kuy Musik</Text>
         <Text style={style.text3}>Jos Jos Aye Aye</Text>
         <TouchableOpacity
@@ -255,5 +305,45 @@ const style = StyleSheet.create({
     position: "absolute",
     backgroundColor: "rgba(183,200,203,1)",
     borderRadius: 100
-  }
+  },
+
+  ellipsechange1: {
+    top: 376.49,
+    left: 54.76,
+    width: 50.4,
+    height: 49.91,
+    position: "absolute",
+    backgroundColor: "	#20a8e0",
+    borderRadius: 100
+  },
+  ellipsechange2: {
+    top: 356.22,
+    left: 234.38,
+    width: 90.34,
+    height: 90.45,
+    position: "absolute",
+    backgroundColor: "	#20a8e0",
+    borderRadius: 100,
+    elevation: 10
+  },
+  ellipsechange4: {
+    top: 267.29,
+    left: 196.71,
+    width: 75.34,
+    height: 75.45,
+    position: "absolute",
+    backgroundColor: "	#20a8e0",
+    borderRadius: 100,
+    elevation: 10
+  },
+  ellipsechange6: {
+    top: 267.29,
+    left: 95.93,
+    width: 75.34,
+    height: 75.45,
+    position: "absolute",
+    backgroundColor: "	#20a8e0",
+    borderRadius: 100,
+    elevation: 10
+  },
 });
