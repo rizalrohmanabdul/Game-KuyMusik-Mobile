@@ -10,25 +10,56 @@ import {
   Image
 } from "react-native";
 import Sound from "react-native-sound";
+import isEmpty from 'lodash.isempty'
 
 class Dashboard extends Component {
   constructor() {
     super();
-
     this.onButtonPress = this.onButtonPress.bind(this);
+
   }
-  onButtonPress(sing) {
-    const audio = new Sound(
-      sing,
-      Sound.MAIN_BUNDLE,
-      err => {
-        if (err) {
-          return;
-        } else {
-          audio.play(() => audio.release());
-        }
+  onButtonPress(sing, numButton) {
+    if (numButton === 1) {
+      const audio = new Sound(sing, Sound.MAIN_BUNDLE, err => {
+      if (err) {
+        return;
+      } else {
+        audio.play(() => audio.release());
       }
-    );
+    });
+      
+    } else if (numButton === 2) {
+      const audio = new Sound(sing, Sound.MAIN_BUNDLE, err => {
+      if (err) {
+        return;
+      } else {
+        audio.play(() => audio.release());
+      }
+    });
+    }else if (numButton === 3) {
+      const audio = new Sound(sing, Sound.MAIN_BUNDLE, err => {
+      if (err) {
+        return;
+      } else {
+        audio.play(() => audio.release());
+      }
+    });
+    }else if (numButton === 4) {
+      const audio = new Sound(sing, Sound.MAIN_BUNDLE, err => {
+      if (err) {
+        return;
+      } else {
+        audio.play(() => audio.release());
+      }
+    });
+    }
+    // const audio = new Sound(sing, Sound.MAIN_BUNDLE, err => {
+    //   if (err) {
+    //     return;
+    //   } else {
+    //     audio.play(() => audio.release());
+    //   }
+    // });
   }
   render() {
     return (
@@ -64,22 +95,22 @@ class Dashboard extends Component {
         <TouchableOpacity
           style={style.ellipse}
           activeOpacity={0.4}
-          onPress={() => this.onButtonPress('boom.wav')}
+          onPress={() => this.onButtonPress("boom.wav", 1)}
         />
         <TouchableOpacity
           style={style.ellipse2}
           activeOpacity={0.4}
-          onPress={() => this.onButtonPress('hihat.wav')}
+          onPress={() => this.onButtonPress("hihat.wav", 2)}
         />
         <TouchableOpacity
           style={style.ellipse4}
           activeOpacity={0.4}
-          onPress={() => this.onButtonPress('tom.wav')}
+          onPress={() => this.onButtonPress("tom.wav", 3)}
         />
         <TouchableOpacity
           style={style.ellipse6}
           activeOpacity={0.4}
-          onPress={() => this.onButtonPress('clap.wav')}
+          onPress={() => this.onButtonPress("clap.wav", 4)}
         />
       </View>
     );
@@ -155,7 +186,8 @@ const style = StyleSheet.create({
     height: 90.45,
     position: "absolute",
     backgroundColor: "rgba(238,206,206,1)",
-    borderRadius: 100
+    borderRadius: 100,
+    elevation: 10
   },
   ellipse1: {
     top: 376.49,
@@ -173,7 +205,8 @@ const style = StyleSheet.create({
     height: 90.45,
     position: "absolute",
     backgroundColor: "rgba(238,206,206,1)",
-    borderRadius: 100
+    borderRadius: 100,
+    elevation: 10
   },
   ellipse3: {
     top: 376.49,
