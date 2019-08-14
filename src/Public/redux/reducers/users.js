@@ -1,3 +1,4 @@
+import AsyncStorage from "@react-native-community/async-storage";
 const initialState = {
   listUsers: [],
   isLoading: false,
@@ -21,6 +22,10 @@ const users = (state = initialState, action) => {
         isRejected: true
       };
     case "LOGIN_USER_FULFILLED":
+        const idtoken = action.payload.data.result.id_user
+        AsyncStorage.setItem('token', 'bearer '+ action.payload.data.result.token )
+        AsyncStorage.setItem('id', idtoken.toString())
+        AsyncStorage.setItem('level', action.payload.data.result.level_user)
       return {
         ...state,
         isLoading: false,

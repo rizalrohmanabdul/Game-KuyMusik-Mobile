@@ -1,4 +1,6 @@
 import React, { Fragment, Component } from "react";
+import AsyncStorage from "@react-native-community/async-storage";
+import Icon from "react-native-vector-icons/FontAwesome";
 import {
   SafeAreaView,
   StyleSheet,
@@ -22,8 +24,16 @@ class Dashboard extends Component {
       point: 0,
       pattern: [1, 2, 1, 1, 4],
       isNow: 0,
-      button: 1
+      button: 1,
+      id : ""
     };
+    AsyncStorage.getItem("id", (error, result) => {
+      if (result) {
+        this.setState({
+          id: result
+        });
+      }
+    });
   }
   onButtonPress = async (sing, numButton) => {
     if (numButton === 1) {
@@ -36,21 +46,12 @@ class Dashboard extends Component {
           return;
         } else {
           audio.play(() => audio.release());
+          this.setState({
+            button: this.state.pattern[this.state.isNow]
+          });
         }
       });
     } else if (numButton === 2) {
-      await this.setState({
-        button: 4
-      });
-      console.log("Tombol " + this.state.button);
-      const audio = new Sound(sing, Sound.MAIN_BUNDLE, err => {
-        if (err) {
-          return;
-        } else {
-          audio.play(() => audio.release());
-        }
-      });
-    } else if (numButton === 3) {
       await this.setState({
         button: 2
       });
@@ -60,9 +61,12 @@ class Dashboard extends Component {
           return;
         } else {
           audio.play(() => audio.release());
+          this.setState({
+            button: this.state.pattern[this.state.isNow]
+          });
         }
       });
-    } else if (numButton === 4) {
+    } else if (numButton === 3) {
       await this.setState({
         button: 3
       });
@@ -72,35 +76,63 @@ class Dashboard extends Component {
           return;
         } else {
           audio.play(() => audio.release());
+          this.setState({
+            button: this.state.pattern[this.state.isNow]
+          });
+        }
+      });
+    } else if (numButton === 4) {
+      await this.setState({
+        button: 4
+      });
+      console.log("Tombol " + this.state.button);
+      const audio = new Sound(sing, Sound.MAIN_BUNDLE, err => {
+        if (err) {
+          return;
+        } else {
+          audio.play(() => audio.release());
+          this.setState({
+            button: this.state.pattern[this.state.isNow]
+          });
         }
       });
     }
 
-    if (this.state.pattern[this.state.isNow] === this.state.button) {
-      if (this.state.pattern.length === this.state.isNow + 1) {
-        await this.setState({
-          combo: this.state.combo - 1
-        });
-      }
-      await this.setState({
-        point: this.state.point + 10,
-        isNow: this.state.isNow + 1
-      });
+    if (this.state.combo < 1 ) {
+      alert(
+        "Selamat Anda Masuk Ke Level Selanjutnya dengan Point " +
+          this.state.point
+      );
     } else {
-      await this.setState({
-        point: 0,
-        hasil: 0,
-        isNow: 0,
-        combo: 5
-      });
+      if (this.state.pattern[this.state.isNow] === this.state.button) {
+        if (this.state.pattern.length === this.state.isNow + 1) {
+          await this.setState({
+            combo: this.state.combo - 1,
+            isNow: 0
+          });
+        }
+        await this.setState({
+          point: this.state.point + 10,
+          isNow: this.state.isNow + 1
+        });
+      } else {
+        await this.setState({
+          point: 0,
+          hasil: 0,
+          isNow: 0,
+          combo: 5
+        });
+        alert('Game Over !!!, Nub Banget Si Lu, ')
+      }
     }
-    // const audio = new Sound(sing, Sound.MAIN_BUNDLE, err => {
-    //   if (err) {
-    //     return;
-    //   } else {
-    //     audio.play(() => audio.release());
-    //   }
-    // });
+    console.log(
+      "xxxxxxxx" +
+        this.state.pattern[this.state.isNow] +
+        "==" +
+        this.state.button
+    );
+    console.log("sisa combo", this.state.combo);
+    console.log("point", this.state.point);
   };
   setpoint() {
     this.setState(() => {
@@ -112,56 +144,111 @@ class Dashboard extends Component {
     return (
       <View style={style.body}>
         <View style={style.navbar}>
+        {!isEmpty(this.state.id)? 
+          <TouchableOpacity
+          style={style.profilnavbar}
+          onPress={() => this.props.navigation.openDrawer()}
+        >
+          <Image
+            style={{
+              width: 32,
+              height: 32,
+              borderRadius: 100,
+              overflow: "hidden"
+            }}
+            source={require("../Assets/img/1564481740.jpg")}
+          />
+        </TouchableOpacity>
+          :
           <TouchableOpacity
             style={style.profilnavbar}
             onPress={() => this.props.navigation.openDrawer()}
           >
-            <Image
-              style={{
-                width: 32,
-                height: 32,
-                borderRadius: 100,
-                overflow: "hidden"
-              }}
-              source={require("../Assets/img/1564481740.jpg")}
-            />
+            <Icon name="bars" style={{ fontSize :32, color: "#fff", }} />
           </TouchableOpacity>
-          <TouchableOpacity
+          }
+          
+          {!isEmpty(this.state.id)?
+            <TouchableOpacity
             style={style.scornavbar}
             onPress={() => this.props.navigation.navigate("Leaderboard")}
-          >
+          > 
             <Image
               style={{ width: 32, height: 32 }}
               source={require("../Assets/img/crown.png")}
             />
           </TouchableOpacity>
+            : 
+            <TouchableOpacity
+            style={style.scornavbar}
+            onPress={() => this.props.navigation.navigate("Login")}
+          > 
+            <Icon name="sign-in" style={{ fontSize :32, color: "#fff",  }} />
+          </TouchableOpacity>
+            }
+          
         </View>
         <View style={{ marginTop: 90 }}>
-          <Text style={{ textAlign: "center", fontSize: 30, color: "#f79237", }}>POINT : {this.state.point}</Text>
+          <Text style={{ textAlign: "center", fontSize: 30, color: "#f79237" }}>
+            POINT : {this.state.point}
+          </Text>
         </View>
         <Text style={style.text}>Combo Hit : {this.state.combo}</Text>
         <Text style={style.text2}>Kuy Musik</Text>
         <Text style={style.text3}>Jos Jos Aye Aye</Text>
-        <TouchableOpacity
-          style={style.ellipse}
-          activeOpacity={0.4}
-          onPress={() => this.onButtonPress("boom.wav", 1)}
-        />
-        <TouchableOpacity
-          style={style.ellipse2}
-          activeOpacity={0.4}
-          onPress={() => this.onButtonPress("hihat.wav", 2)}
-        />
-        <TouchableOpacity
-          style={style.ellipse4}
-          activeOpacity={0.4}
-          onPress={() => this.onButtonPress("tom.wav", 3)}
-        />
-        <TouchableOpacity
-          style={style.ellipse6}
-          activeOpacity={0.4}
-          onPress={() => this.onButtonPress("clap.wav", 4)}
-        />
+        {this.state.button == 1 ? (
+          <TouchableOpacity
+            style={[style.ellipse, { backgroundColor: "#212c3e" }]}
+            activeOpacity={0.4}
+            onPress={() => this.onButtonPress("boom.wav", 1)}
+          />
+        ) : (
+          <TouchableOpacity
+            style={style.ellipse}
+            activeOpacity={0.4}
+            onPress={() => this.onButtonPress("boom.wav", 1)}
+          />
+        )}
+
+        {this.state.button == 2 ? (
+          <TouchableOpacity
+            style={[style.ellipse2, { backgroundColor: "#212c3e" }]}
+            activeOpacity={0.4}
+            onPress={() => this.onButtonPress("hihat.wav", 2)}
+          />
+        ) : (
+          <TouchableOpacity
+            style={style.ellipse2}
+            activeOpacity={0.4}
+            onPress={() => this.onButtonPress("hihat.wav", 2)}
+          />
+        )}
+        {this.state.button == 3 ? (
+          <TouchableOpacity
+            style={[style.ellipse4, { backgroundColor: "#212c3e" }]}
+            activeOpacity={0.4}
+            onPress={() => this.onButtonPress("tom.wav", 3)}
+          />
+        ) : (
+          <TouchableOpacity
+            style={style.ellipse4}
+            activeOpacity={0.4}
+            onPress={() => this.onButtonPress("tom.wav", 3)}
+          />
+        )}
+        {this.state.button == 4 ? (
+          <TouchableOpacity
+            style={[style.ellipse6, { backgroundColor: "#212c3e" }]}
+            activeOpacity={0.4}
+            onPress={() => this.onButtonPress("clap.wav", 4)}
+          />
+        ) : (
+          <TouchableOpacity
+            style={style.ellipse6}
+            activeOpacity={0.4}
+            onPress={() => this.onButtonPress("clap.wav", 4)}
+          />
+        )}
       </View>
     );
   }
@@ -305,45 +392,45 @@ const style = StyleSheet.create({
     position: "absolute",
     backgroundColor: "rgba(183,200,203,1)",
     borderRadius: 100
-  },
+  }
 
-  ellipsechange1: {
-    top: 376.49,
-    left: 54.76,
-    width: 50.4,
-    height: 49.91,
-    position: "absolute",
-    backgroundColor: "	#20a8e0",
-    borderRadius: 100
-  },
-  ellipsechange2: {
-    top: 356.22,
-    left: 234.38,
-    width: 90.34,
-    height: 90.45,
-    position: "absolute",
-    backgroundColor: "	#20a8e0",
-    borderRadius: 100,
-    elevation: 10
-  },
-  ellipsechange4: {
-    top: 267.29,
-    left: 196.71,
-    width: 75.34,
-    height: 75.45,
-    position: "absolute",
-    backgroundColor: "	#20a8e0",
-    borderRadius: 100,
-    elevation: 10
-  },
-  ellipsechange6: {
-    top: 267.29,
-    left: 95.93,
-    width: 75.34,
-    height: 75.45,
-    position: "absolute",
-    backgroundColor: "	#20a8e0",
-    borderRadius: 100,
-    elevation: 10
-  },
+  // ellipsechange1: {
+  //   top: 376.49,
+  //   left: 54.76,
+  //   width: 50.4,
+  //   height: 49.91,
+  //   position: "absolute",
+  //   backgroundColor: "	#212c3e",
+  //   borderRadius: 100
+  // },
+  // ellipsechange2: {
+  //   top: 356.22,
+  //   left: 234.38,
+  //   width: 90.34,
+  //   height: 90.45,
+  //   position: "absolute",
+  //   backgroundColor: "	#212c3e",
+  //   borderRadius: 100,
+  //   elevation: 10
+  // },
+  // ellipsechange4: {
+  //   top: 267.29,
+  //   left: 196.71,
+  //   width: 75.34,
+  //   height: 75.45,
+  //   position: "absolute",
+  //   backgroundColor: "	#212c3e",
+  //   borderRadius: 100,
+  //   elevation: 10
+  // },
+  // ellipsechange6: {
+  //   top: 267.29,
+  //   left: 95.93,
+  //   width: 75.34,
+  //   height: 75.45,
+  //   position: "absolute",
+  //   backgroundColor: "	#212c3e",
+  //   borderRadius: 100,
+  //   elevation: 10
+  // },
 });
