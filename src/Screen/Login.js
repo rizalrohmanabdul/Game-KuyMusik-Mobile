@@ -39,6 +39,7 @@ class Login extends Component {
             spinner: false
           });
           alert("Success !!!");
+          
           this.props.navigation.navigate('Dashboard');
         })
         .catch(err => {
@@ -65,7 +66,6 @@ class Login extends Component {
           <Text style={style.textPlease}>Welcome, Please login here</Text>
         </View>
         <Spinner
-        // visible={true}
           visible={this.state.spinner}
           textContent={"Loading..."}
           textStyle={{ color: "#fff" }}

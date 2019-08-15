@@ -1,36 +1,52 @@
 import AsyncStorage from "@react-native-community/async-storage";
 const initialState = {
-  listUsers: [],
+  listPoint: [],
   isLoading: false,
   isRejected: false,
   isFulfilled: false
 };
 
-const users = (state = initialState, action) => {
+const point = (state = initialState, action) => {
   switch (action.type) {
-    case "LOGIN_USER_PENDING":
+    case "POINT_GET_PENDING":
       return {
         ...state,
         isLoading: true,
         isRejected: false,
         isFulfilled: false
       };
-    case "LOGIN_USER_REJECTED":
+    case "POINT_GET_REJECTED":
       return {
         ...state,
         isLoading: false,
         isRejected: true
       };
-    case "LOGIN_USER_FULFILLED":
-        const idtoken = action.payload.data.result.id_user
-        AsyncStorage.setItem('token', 'bearer '+ action.payload.data.result.token )
-        AsyncStorage.setItem('id', idtoken.toString())
-        AsyncStorage.setItem('level', action.payload.data.result.level_user)
+    case "POINT_GET_FULFILLED":
       return {
         ...state,
         isLoading: false,
         isFulfilled: true,
-        listUsers: action.payload.data
+        listPoint: action.payload.data
+      };
+      case "POINT_GETMe_PENDING":
+      return {
+        ...state,
+        isLoading: true,
+        isRejected: false,
+        isFulfilled: false
+      };
+    case "POINT_GETMe_REJECTED":
+      return {
+        ...state,
+        isLoading: false,
+        isRejected: true
+      };
+    case "POINT_GETMe_FULFILLED":
+      return {
+        ...state,
+        isLoading: false,
+        isFulfilled: true,
+        listPoint: action.payload.data
       };
     case "REGISTER_USER_PENDING":
       return {
@@ -50,31 +66,11 @@ const users = (state = initialState, action) => {
         ...state,
         isLoading: false,
         isFulfilled: true,
-        listUsers: action.payload.data
-      };
-      case "USERS_GETMe_PENDING":
-      return {
-        ...state,
-        isLoading: true,
-        isRejected: false,
-        isFulfilled: false
-      };
-    case "USERS_GETMe_REJECTED":
-      return {
-        ...state,
-        isLoading: false,
-        isRejected: true
-      };
-    case "USERS_GETMe_FULFILLED":
-      return {
-        ...state,
-        isLoading: false,
-        isFulfilled: true,
-        listUsers: action.payload.data
+        listPoint: action.payload.data
       };
     default:
       return state;
   }
 };
 
-export default users;
+export default point;

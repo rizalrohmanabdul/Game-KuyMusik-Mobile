@@ -15,3 +15,9 @@ export const registerUser = (data) => {
     payload: axios.post(URL + "/users/register", data)
   };
 };
+export const usersGETMe = (id_user) => {
+  return {
+    type: "USERS_GETMe",
+    payload: axios.get(URL + `/users/me/${id_user}`)
+  };
+};

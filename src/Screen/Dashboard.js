@@ -13,6 +13,11 @@ import {
 } from "react-native";
 import Sound from "react-native-sound";
 import isEmpty from "lodash.isempty";
+import Axios from "axios";
+import { pointGET, pointGETMe } from "../Public/redux/actions/point";
+import { usersGETMe } from "../Public/redux/actions/users";
+import { getPatternNow } from "../Public/redux/actions/pattern";
+import { connect } from "react-redux";
 
 class Dashboard extends Component {
   constructor() {
@@ -20,21 +25,116 @@ class Dashboard extends Component {
     this.onButtonPress = this.onButtonPress.bind(this);
     this.state = {
       hasil: 0,
-      combo: 5,
+      combo: 0,
       point: 0,
-      pattern: [1, 2, 1, 1, 4],
+      pattern: [],
       isNow: 0,
       button: 1,
-      id : ""
+      id: 0,
+      isLogin: false,
+      data: [],
+      patternfromdb: []
     };
+  }
+  componentDidMount = async () => {
     AsyncStorage.getItem("id", (error, result) => {
       if (result) {
         this.setState({
-          id: result
+          id: result,
+          isLogin: true
         });
       }
     });
-  }
+    // await this.props.dispatch(usersGETMe(this.state.id)).then(() => {
+    //   this.setState({
+    //     spinner: false,
+    //     data: this.props.point.listPoint.result
+    //   });
+    // });
+    await this.props.dispatch(getPatternNow());
+    this.setState({
+      pattern: this.props.listpattern.patternList.result[0].pattern_type.split('').map(Number) ,
+      combo: this.props.listpattern.patternList.result[0].combo_lengt,
+      
+    })
+      this.setState({
+        // pattern : this.state.patternfromdb.map(Number),
+        button: this.state.pattern[0]
+      });
+    
+    console.log('xxxxxx',this.state.patternfromdb)
+  };
+  add = () => {
+    if (this.state.data === undefined) {
+      if (this.state.id === null) {
+        Alert.alert(
+          "Please Login !!!"[
+            ({
+              text: "Login",
+              onPress: () => this.props.navigation.push("Login")
+            },
+            {
+              text: "Cancel ",
+              onPress: () => this.props.navigation.push("dashboard")
+            })
+          ]
+        );
+        this.setState({
+          point: 0,
+          hasil: 0,
+          isNow: 0,
+          combo: 0
+        });
+      } else {
+        console.log(this.state.token);
+        const data = {
+          id_user: Number(this.state.id),
+          point: this.state.point
+        };
+        Axios.post(
+          `http://192.168.100.42:3344/point/me/${this.state.id}`,
+          data
+        ).then(res => {
+          this.setState({
+            point: 0,
+            hasil: 0,
+            isNow: 0,
+            combo: 0
+          });
+          this.props.navigation.push("dashboard");
+        });
+      }
+    } else {
+      console.log(this.state.data.point);
+      if (this.state.data.point < this.state.point) {
+        console.log(this.state.data.point);
+        const data = {
+          idUser: Number(this.state.id),
+          point: this.state.point
+        };
+        Axios.patch(
+          `http://192.168.100.42:3344/point/me/${this.state.id}`,
+          data
+        ).then(res => {
+          this.setState({
+            point: 0,
+            hasil: 0,
+            isNow: 0,
+            combo: 0
+          });
+          this.props.navigation.push("dashboard");
+        });
+      } else {
+        this.setState({
+          point: 0,
+          hasil: 0,
+          isNow: 0,
+          combo: 0
+        });
+        this.props.navigation.push("dashboard");
+      }
+    }
+  };
   onButtonPress = async (sing, numButton) => {
     if (numButton === 1) {
       await this.setState({
@@ -98,11 +198,13 @@ class Dashboard extends Component {
       });
     }
 
-    if (this.state.combo < 1 ) {
+    if (this.state.combo < 1) {
       alert(
         "Selamat Anda Masuk Ke Level Selanjutnya dengan Point " +
           this.state.point
+      
       );
+      this.add();
     } else {
       if (this.state.pattern[this.state.isNow] === this.state.button) {
         if (this.state.pattern.length === this.state.isNow + 1) {
@@ -120,9 +222,9 @@ class Dashboard extends Component {
           point: 0,
           hasil: 0,
           isNow: 0,
-          combo: 5
+          combo: this.state.combo
         });
-        alert('Game Over !!!, Nub Banget Si Lu, ')
+        alert("Game Over !!!, Nub Banget Si Lu, ");
       }
     }
     console.log(
@@ -144,49 +246,48 @@ class Dashboard extends Component {
     return (
       <View style={style.body}>
         <View style={style.navbar}>
-        {!isEmpty(this.state.id)? 
-          <TouchableOpacity
-          style={style.profilnavbar}
-          onPress={() => this.props.navigation.openDrawer()}
-        >
-          <Image
-            style={{
-              width: 32,
-              height: 32,
-              borderRadius: 100,
-              overflow: "hidden"
-            }}
-            source={require("../Assets/img/1564481740.jpg")}
-          />
-        </TouchableOpacity>
-          :
-          <TouchableOpacity
-            style={style.profilnavbar}
-            onPress={() => this.props.navigation.openDrawer()}
-          >
-            <Icon name="bars" style={{ fontSize :32, color: "#fff", }} />
-          </TouchableOpacity>
-          }
-          
-          {!isEmpty(this.state.id)?
+          {this.state.isLogin === true ? (
             <TouchableOpacity
-            style={style.scornavbar}
-            onPress={() => this.props.navigation.navigate("Leaderboard")}
-          > 
-            <Image
-              style={{ width: 32, height: 32 }}
-              source={require("../Assets/img/crown.png")}
-            />
-          </TouchableOpacity>
-            : 
+              style={style.profilnavbar}
+              onPress={() => this.props.navigation.openDrawer()}
+            >
+              <Image
+                style={{
+                  width: 32,
+                  height: 32,
+                  borderRadius: 100,
+                  overflow: "hidden"
+                }}
+                source={require("../Assets/img/1564481740.jpg")}
+              />
+            </TouchableOpacity>
+          ) : (
             <TouchableOpacity
-            style={style.scornavbar}
-            onPress={() => this.props.navigation.navigate("Login")}
-          > 
-            <Icon name="sign-in" style={{ fontSize :32, color: "#fff",  }} />
-          </TouchableOpacity>
-            }
-          
+              style={style.profilnavbar}
+              onPress={() => this.props.navigation.openDrawer()}
+            >
+              <Icon name="bars" style={{ fontSize: 32, color: "#fff" }} />
+            </TouchableOpacity>
+          )}
+
+          {!isEmpty(this.state.id) ? (
+            <TouchableOpacity
+              style={style.scornavbar}
+              onPress={() => this.props.navigation.navigate("Leaderboard")}
+            >
+              <Image
+                style={{ width: 32, height: 32 }}
+                source={require("../Assets/img/crown.png")}
+              />
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              style={style.scornavbar}
+              onPress={() => this.props.navigation.navigate("Login")}
+            >
+              <Icon name="sign-in" style={{ fontSize: 32, color: "#fff" }} />
+            </TouchableOpacity>
+          )}
         </View>
         <View style={{ marginTop: 90 }}>
           <Text style={{ textAlign: "center", fontSize: 30, color: "#f79237" }}>
@@ -253,8 +354,15 @@ class Dashboard extends Component {
     );
   }
 }
+const mapStateToProps = state => {
+  return {
+    users: state.users,
+    point: state.point,
+    listpattern: state.pattern
+  };
+};
 
-export default Dashboard;
+export default connect(mapStateToProps)(Dashboard);
 const style = StyleSheet.create({
   body: {
     flex: 1,
