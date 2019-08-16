@@ -110,6 +110,9 @@ class Ledearboard extends Component {
               textStyle={{ color: "#fff" }}
             />
             <FlatList
+            style={{
+              height: "100%"
+            }}
               data={this.state.leaderpoint}
               renderItem={({ item }) => {
                 return (

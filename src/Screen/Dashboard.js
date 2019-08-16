@@ -18,6 +18,7 @@ import { pointGET, pointGETMe } from "../Public/redux/actions/point";
 import { usersGETMe } from "../Public/redux/actions/users";
 import { getPatternNow } from "../Public/redux/actions/pattern";
 import { connect } from "react-redux";
+import Spinner from "react-native-loading-spinner-overlay";
 
 class Dashboard extends Component {
   constructor() {
@@ -33,7 +34,8 @@ class Dashboard extends Component {
       id: 0,
       isLogin: false,
       data: [],
-      patternfromdb: []
+      patternfromdb: [],
+      spinner: true
     };
   }
   componentDidMount = async () => {
@@ -55,7 +57,7 @@ class Dashboard extends Component {
     this.setState({
       pattern: this.props.listpattern.patternList.result[0].pattern_type.split('').map(Number) ,
       combo: this.props.listpattern.patternList.result[0].combo_lengt,
-      
+      spinner: false
     })
       this.setState({
         // pattern : this.state.patternfromdb.map(Number),
@@ -289,6 +291,12 @@ class Dashboard extends Component {
             </TouchableOpacity>
           )}
         </View>
+        <Spinner
+        // visible={true}
+          visible={this.state.spinner}
+          textContent={"Loading..."}
+          textStyle={{ color: "#fff" }}
+        />
         <View style={{ marginTop: 90 }}>
           <Text style={{ textAlign: "center", fontSize: 30, color: "#f79237" }}>
             POINT : {this.state.point}
