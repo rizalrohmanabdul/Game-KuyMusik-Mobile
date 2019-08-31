@@ -9,7 +9,8 @@ import {
   Text,
   StatusBar,
   TouchableOpacity,
-  Image
+  Image,
+  Alert
 } from "react-native";
 import Sound from "react-native-sound";
 import isEmpty from "lodash.isempty";
@@ -27,6 +28,7 @@ class Dashboard extends Component {
     this.state = {
       hasil: 0,
       combo: 0,
+      combodb: 0,
       point: 0,
       pattern: [],
       isNow: 0,
@@ -35,8 +37,16 @@ class Dashboard extends Component {
       isLogin: false,
       data: [],
       patternfromdb: [],
-      spinner: true
+      spinner: true,
+      img: ''
     };
+    AsyncStorage.getItem("img", (error, result) => {
+      if (result) {
+        this.setState({
+          img: result
+        });
+      }
+    });
   }
   componentDidMount = async () => {
     AsyncStorage.getItem("id", (error, result) => {
@@ -55,87 +65,100 @@ class Dashboard extends Component {
     // });
     await this.props.dispatch(getPatternNow());
     this.setState({
-      pattern: this.props.listpattern.patternList.result[0].pattern_type.split('').map(Number) ,
+      pattern: this.props.listpattern.patternList.result[0].pattern_type
+        .split("")
+        .map(Number),
       combo: this.props.listpattern.patternList.result[0].combo_lengt,
+      combodb: this.props.listpattern.patternList.result[0].combo_lengt,
       spinner: false
-    })
-      this.setState({
-        // pattern : this.state.patternfromdb.map(Number),
-        button: this.state.pattern[0]
-      });
-    
-    console.log('xxxxxx',this.state.patternfromdb)
+    });
+    this.setState({
+      // pattern : this.state.patternfromdb.map(Number),
+      button: this.state.pattern[0]
+    });
+
+    console.log("xxxxxx", this.state.combodb);
   };
   add = () => {
-    if (this.state.data === undefined) {
-      if (this.state.id === null) {
-        Alert.alert(
-          "Please Login !!!"[
-            ({
-              text: "Login",
-              onPress: () => this.props.navigation.push("Login")
-            },
-            {
-              text: "Cancel ",
-              onPress: () => this.props.navigation.push("dashboard")
-            })
-          ]
-        );
-        this.setState({
-          point: 0,
-          hasil: 0,
-          isNow: 0,
-          combo: 0
-        });
-      } else {
-        console.log(this.state.token);
-        const data = {
-          id_user: Number(this.state.id),
-          point: this.state.point
-        };
-        Axios.post(
-          `http://192.168.100.42:3344/point/me/${this.state.id}`,
-          data
-        ).then(res => {
-          this.setState({
-            point: 0,
-            hasil: 0,
-            isNow: 0,
-            combo: 0
-          });
-          this.props.navigation.push("dashboard");
-        });
-      }
-    } else {
-      console.log(this.state.data.point);
-      if (this.state.data.point < this.state.point) {
-        console.log(this.state.data.point);
-        const data = {
-          idUser: Number(this.state.id),
-          point: this.state.point
-        };
-        Axios.patch(
-          `http://192.168.100.42:3344/point/me/${this.state.id}`,
-          data
-        ).then(res => {
-          this.setState({
-            point: 0,
-            hasil: 0,
-            isNow: 0,
-            combo: 0
-          });
-          this.props.navigation.push("dashboard");
-        });
-      } else {
-        this.setState({
-          point: 0,
-          hasil: 0,
-          isNow: 0,
-          combo: 0
-        });
-        this.props.navigation.push("dashboard");
-      }
+
+    this.setState({
+      combo: this.state.combodb
+    });
+    if (this.state.id === 0) {
+      alert('please Login to Save Point')
+      this.props.navigation.push("Login")
+    }else{
+      alert('ada')
     }
+    // if (this.state.data === undefined) {
+    //   if (this.state.id === null) {
+    //     Alert.alert(
+    //       "Please Login !!!"[
+    //         ({
+    //           text: "Login",
+    //           onPress: () => this.props.navigation.push("Login")
+    //         },
+    //         {
+    //           text: "Cancel ",
+    //           onPress: () => this.props.navigation.push("dashboard")
+    //         })
+    //       ]
+    //     );
+    //     this.setState({
+    //       point: 0,
+    //       hasil: 0,
+    //       isNow: 0,
+    //       combo: 0
+    //     });
+    //   } else {
+    //     console.log(this.state.token);
+    //     const data = {
+    //       id_user: Number(this.state.id),
+    //       point: this.state.point
+    //     };
+    //     Axios.post(
+    //       `http://192.168.100.42:3344/point/me/${this.state.id}`,
+    //       data
+    //     ).then(res => {
+    //       this.setState({
+    //         point: 0,
+    //         hasil: 0,
+    //         isNow: 0,
+    //         combo: 0
+    //       });
+    //       this.props.navigation.push("dashboard");
+    //     });
+    //   }
+    // } else {
+    //   console.log(this.state.data.point);
+    //   if (this.state.data.point < this.state.point) {
+    //     console.log(this.state.data.point);
+    //     const data = {
+    //       idUser: Number(this.state.id),
+    //       point: this.state.point
+    //     };
+    //     Axios.patch(
+    //       `http://192.168.100.42:3344/point/me/${this.state.id}`,
+    //       data
+    //     ).then(res => {
+    //       this.setState({
+    //         point: 0,
+    //         hasil: 0,
+    //         isNow: 0,
+    //         combo: 0
+    //       });
+    //       this.props.navigation.push("dashboard");
+    //     });
+    //   } else {
+    //     this.setState({
+    //       point: 0,
+    //       hasil: 0,
+    //       isNow: 0,
+    //       combo: 0
+    //     });
+    //     this.props.navigation.push("dashboard");
+    //   }
+    // }
   };
   onButtonPress = async (sing, numButton) => {
     if (numButton === 1) {
@@ -204,7 +227,6 @@ class Dashboard extends Component {
       alert(
         "Selamat Anda Masuk Ke Level Selanjutnya dengan Point " +
           this.state.point
-      
       );
       this.add();
     } else {
@@ -260,7 +282,7 @@ class Dashboard extends Component {
                   borderRadius: 100,
                   overflow: "hidden"
                 }}
-                source={require("../Assets/img/1564481740.jpg")}
+                source={{uri: this.state.img}}
               />
             </TouchableOpacity>
           ) : (
@@ -292,7 +314,7 @@ class Dashboard extends Component {
           )}
         </View>
         <Spinner
-        // visible={true}
+          // visible={true}
           visible={this.state.spinner}
           textContent={"Loading..."}
           textStyle={{ color: "#fff" }}

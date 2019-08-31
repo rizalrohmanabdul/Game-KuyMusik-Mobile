@@ -17,7 +17,10 @@ class DrawerDashboard extends Component {
   constructor() {
     super();
     this.state = {
-      id: ""
+      id: 0,
+      full: 0,
+      pointme: 0,
+      img: ''
     };
     AsyncStorage.getItem("id", (error, result) => {
       if (result) {
@@ -26,6 +29,36 @@ class DrawerDashboard extends Component {
         });
       }
     });
+    AsyncStorage.getItem("point", (error, result) => {
+      if (result) {
+        this.setState({
+          pointme: result
+        });
+      }
+    });
+    AsyncStorage.getItem("img", (error, result) => {
+      if (result) {
+        this.setState({
+          img: result
+        });
+      }
+    });
+    AsyncStorage.getItem("full", (error, result) => {
+      if (result) {
+        this.setState({
+          full: result
+        });
+      }
+    });
+  }
+  componentDidMount = async () => {
+    // await this.fetchUser();
+    await this.props.dispatch(GetUserAll()).then(() => {
+      this.setState({
+        spinner: false,
+        leaderpoint: this.props.users.listUsers.result
+      });
+    });
   }
   logout = () => {
     AsyncStorage.removeItem("id", error => {
@@ -33,7 +66,7 @@ class DrawerDashboard extends Component {
         alert(error);
       } else {
         alert("Success !!!");
-        this.props.navigation.navigate("Dashboard");
+        this.props.navigation.navigate("Login");
       }
     });
   };
@@ -65,9 +98,9 @@ class DrawerDashboard extends Component {
             <View style={style.profile}>
               <Image
                 style={style.image}
-                source={require("../Assets/img/1564481740.jpg")}
+                source={{uri: this.state.img}}
               />
-              <Text style={style.name}>Rizal Rohman</Text>
+              <Text style={style.name}>{this.state.full}</Text>
             </View>
             <View>
               <TouchableOpacity

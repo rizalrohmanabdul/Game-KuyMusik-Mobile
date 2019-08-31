@@ -22,3 +22,10 @@ export const usersGETMe = (id_user) => {
     payload: axios.get(URL + `/users/me/${id_user}`)
   };
 };
+
+export const GetUserAll = () => {
+  return {
+    type: "GET_USERS_ALL",
+    payload: axios.get(URL + `/users/`)
+  };
+};

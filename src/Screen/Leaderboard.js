@@ -12,11 +12,12 @@ import {
   FlatList,
   Image
 } from "react-native";
-import {pointGET, pointGETMe} from "../Public/redux/actions/point";
-import {usersGETMe} from "../Public/redux/actions/users";
+import { pointGET, pointGETMe } from "../Public/redux/actions/point";
+import { usersGETMe, GetUserAll } from "../Public/redux/actions/users";
 import Spinner from "react-native-loading-spinner-overlay";
 import AsyncStorage from "@react-native-community/async-storage";
-import isEmpty from 'lodash.isempty'
+import isEmpty from "lodash.isempty";
+import Leaderboard from "react-native-leaderboard";
 class Ledearboard extends Component {
   constructor(props) {
     super(props);
@@ -26,41 +27,52 @@ class Ledearboard extends Component {
       spinner: true,
       leaderpointme: [],
       profil: [],
-      id: null
+      id: 0,
+      full: 0,
+      pointme: 0,
+      img: ""
     };
     AsyncStorage.getItem("id", (error, result) => {
       if (result) {
         this.setState({
-          id: result,
-          isLogin : true
+          id: result
+        });
+      }
+    });
+    AsyncStorage.getItem("point", (error, result) => {
+      if (result) {
+        this.setState({
+          pointme: result
+        });
+      }
+    });
+    AsyncStorage.getItem("img", (error, result) => {
+      if (result) {
+        this.setState({
+          img: result
+        });
+      }
+    });
+    AsyncStorage.getItem("full", (error, result) => {
+      if (result) {
+        this.setState({
+          full: result
         });
       }
     });
   }
   componentDidMount = async () => {
     // await this.fetchUser();
-    await this.props.dispatch(pointGET()).then(() => {
+    await this.props.dispatch(GetUserAll()).then(() => {
       this.setState({
         spinner: false,
-        leaderpoint: this.props.point.listPoint.result
+        leaderpoint: this.props.users.listUsers.result
       });
     });
-    await this.props.dispatch(pointGETMe(this.state.id)).then(() => {
-      this.setState({
-        spinner: false,
-        leaderpointme: this.props.point.listPoint.result[0]
-      });
-    });
-    await this.props.dispatch(usersGETMe(this.state.id)).then(() => {
-      this.setState({
-        spinner: false,
-        profil: this.props.users.listUsers.result[0]
-      });
-    });
-    console.log('ini props', this.state.leaderpointme)
   };
-  
+
   render() {
+    console.log("gambar link", this.state.img);
     return (
       <Fragment>
         <View style={style.navbar}>
@@ -93,17 +105,19 @@ class Ledearboard extends Component {
                     borderRadius: 100,
                     overflow: "hidden"
                   }}
-                  source={{uri: this.state.leaderpointme.img_profile}}
+                  source={{ uri: this.state.img }}
                 />
               </View>
               <View style={{ width: 80, height: 80, flexDirection: "column" }}>
                 <Text style={style.textrankpoin}>Points</Text>
-                <Text style={style.textrankpoin}>{this.state.leaderpointme.point}</Text>
+                <Text style={style.textrankpoin}>{this.state.pointme}</Text>
               </View>
             </View>
-            <Text style={style.textrankname}>{this.state.leaderpointme.full_name}</Text>
+            <Text style={style.textrankname}>{this.state.full}</Text>
           </View>
-          <View style={style.bodyboard}>
+          
+        </View>
+        <View style={style.bodyboard}>
             <Spinner
               visible={this.state.spinner}
               textContent={"Loading..."}
@@ -133,8 +147,12 @@ class Ledearboard extends Component {
                 );
               }}
             />
+            {/* <Leaderboard
+              data={this.state.leaderpoint}
+              sortBy="score"
+              labelBy="fullName"
+            /> */}
           </View>
-        </View>
       </Fragment>
     );
   }
@@ -225,7 +243,8 @@ const style = StyleSheet.create({
     fontWeight: "bold",
     color: "#f79237",
     textAlign: "center",
-    padding: "1%"
+    padding: "1%",
+    textAlign: "right"
   },
   textbodyboardname: {
     fontSize: 15,
@@ -234,6 +253,7 @@ const style = StyleSheet.create({
     textAlign: "center",
     paddingRight: "19%",
     paddingLeft: "2%",
-    marginTop: "1%"
+    marginTop: "1%",
+    alignItems: "flex-end"
   }
 });
